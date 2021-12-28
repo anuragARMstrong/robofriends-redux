@@ -17,7 +17,9 @@ function App() {
       .then(response => response.json())
       .then(users => setRobots(users))
       .catch(err => setRobots([]));
-  }, []);
+  }, []); // if we dont give an empty list this hook will run infinite in loop
+  // if we want to run the hook only when some value change, then we pass it into the list
+  // eg., [searchfield]
 
   const onSearchChange = event => setSearchfield(event.target.value);
 
