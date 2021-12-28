@@ -5,21 +5,16 @@ import Scroll from '../components/Scroll';
 import ErrorBoundary from '../components/ErrorBoundary';
 import './App.css';
 
-function App() {
-  // Hooks convention:
-  // const [nameOfVariable, methodToSetValue] = useState(InitialValue)
+const App = () => {
   const [robots, setRobots] = useState([]);
   const [searchfield, setSearchfield] = useState('');
 
-  // useEffect() hook by default runs every time when a component gets mounted
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/users')
       .then(response => response.json())
       .then(users => setRobots(users))
       .catch(err => setRobots([]));
-  }, []); // if we dont give an empty list this hook will run infinite in loop
-  // if we want to run the hook only when some value change, then we pass it into the list
-  // eg., [searchfield]
+  }, []);
 
   const onSearchChange = event => setSearchfield(event.target.value);
 
@@ -38,6 +33,6 @@ function App() {
       </Scroll>
     </div>
   );
-}
+};
 
 export default App;
