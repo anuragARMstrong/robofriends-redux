@@ -6,14 +6,17 @@ import Scroll from '../components/Scroll';
 import ErrorBoundary from '../components/ErrorBoundary';
 import './App.css';
 
-import { setSearchfield } from '../actions';
+import { setSearchfield, requestRobots } from '../actions';
 
 // only listen to changes in specific fields of store / app state
 const mapStateToProps = state => {
   return {
     // convention:
-    // props.fieldName = state.fieldName
-    searchField: state.searchField
+    // props.fieldName = state.reducerName.fieldName   : if we combine multiple reducers
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    error: state.requestRobots.error
   };
 };
 
@@ -22,24 +25,20 @@ const mapDispatchToProps = dispatch => {
   return {
     // convention:
     // props.fieldName = dispatch an actionFunction
-    onSearchChange: event => dispatch(setSearchfield(event.target.value))
+    onSearchChange: event => dispatch(setSearchfield(event.target.value)),
+    onRequestRobots: () => dispatch(requestRobots())
   };
 };
 
 const App = props => {
-  const [robots, setRobots] = useState([]);
-  const { searchField, onSearchChange } = props;
-
+  const { searchField, onSearchChange, robots, onRequestRobots, isPending } = props;
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(users => setRobots(users))
-      .catch(err => setRobots([]));
+    onRequestRobots();
   }, []);
 
   const filteredRobots = robots.filter(robot => robot.name.toLowerCase().includes(searchField.toLowerCase()));
 
-  return !robots.length ? (
+  return isPending ? (
     <h1>Loading..</h1>
   ) : (
     <div className="tc">
