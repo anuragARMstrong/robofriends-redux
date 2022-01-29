@@ -1,31 +1,44 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 import ErrorBoundary from '../components/ErrorBoundary';
 import './App.css';
 
-function App() {
-  // Hooks convention:
-  // const [nameOfVariable, methodToSetValue] = useState(InitialValue)
-  const [robots, setRobots] = useState([]);
-  const [searchfield, setSearchfield] = useState('');
+import { setSearchfield, requestRobots } from '../actions';
 
-  // useEffect() hook by default runs every time when a component gets mounted
+// only listen to changes in specific fields of store / app state
+const mapStateToProps = state => {
+  return {
+    // convention:
+    // props.fieldName = state.reducerName.fieldName   : if we combine multiple reducers
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    error: state.requestRobots.error
+  };
+};
+
+// dispatch is what triggers the action
+const mapDispatchToProps = dispatch => {
+  return {
+    // convention:
+    // props.fieldName = dispatch an actionFunction
+    onSearchChange: event => dispatch(setSearchfield(event.target.value)),
+    onRequestRobots: () => dispatch(requestRobots())
+  };
+};
+
+const App = props => {
+  const { searchField, onSearchChange, robots, onRequestRobots, isPending } = props;
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(users => setRobots(users))
-      .catch(err => setRobots([]));
-  }, []); // if we dont give an empty list this hook will run infinite in loop
-  // if we want to run the hook only when some value change, then we pass it into the list
-  // eg., [searchfield]
+    onRequestRobots();
+  }, []);
 
-  const onSearchChange = event => setSearchfield(event.target.value);
+  const filteredRobots = robots.filter(robot => robot.name.toLowerCase().includes(searchField.toLowerCase()));
 
-  const filteredRobots = robots.filter(robot => robot.name.toLowerCase().includes(searchfield.toLowerCase()));
-
-  return !robots.length ? (
+  return isPending ? (
     <h1>Loading..</h1>
   ) : (
     <div className="tc">
@@ -38,6 +51,10 @@ function App() {
       </Scroll>
     </div>
   );
-}
+};
 
-export default App;
+// explanation: redux connect() means, we just subscribe to the changes happen in redux store
+
+// mapStateToProps - only what state / field changes should App component listen to
+// mapDispatchToProps - what actions App component should be interested in
+export default connect(mapStateToProps, mapDispatchToProps)(App);

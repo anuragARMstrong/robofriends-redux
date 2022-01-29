@@ -1,11 +1,24 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "id": "/robofriends-redux/index.html",
+  "short_name": "Robo Friends",
+  "name": "Robo Friends Online",
+  "description":"Friends are robots and robots are friends.",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "android-chrome-384x384.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "start_url": "./index.html",
